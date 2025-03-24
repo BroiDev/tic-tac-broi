@@ -1,0 +1,43 @@
+#status
+{
+    text-align: center;
+    font-size: 36px;
+    font-weight: bold;
+    font-family: "Arial", sans-serif;
+}
+#board
+{
+    display: grid;
+    margin: 20px auto;
+    width: fit-content;
+    border: 1px solid #000;
+}
+.tile
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100px;
+    height: 100px;
+    font-size: 60px;
+    font-weight: normal;
+    font-family: "Arial", sans-serif;
+    background-color: #f0f0f0;
+    border: 1px solid #000;
+    cursor: pointer;
+    box-sizing: border-box;
+    user-select: none;
+    transition: background-color 0.5s;
+}
+.tile:hover
+{
+    background-color: #ddd;
+}
+.tile.disabled
+{
+    cursor: not-allowed;
+}
+.tile.winning
+{
+    cursor: default;
+}

@@ -1,0 +1,43 @@
+@font-face {
+    font-family: "Fredoka One";
+    src: url("../fonts/FredokaOne-Regular-PL.otf");
+}
+
+body
+{
+    padding: 0;
+    margin: 0;
+}
+header
+{
+    --margin-x: 10px;
+    position: relative;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0 var(--margin-x);
+    height: 100px;
+    width: calc(100vw - calc(var(--margin-x) * 2));
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+#logo
+{
+    height: 100%;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-direction: row;
+    font-family: "Fredoka One", ui-rounded;
+    font-size: 32px;
+    text-decoration: none;
+    color: black;
+}
+#logo img
+{
+    height: 75%;
+    margin: 0;
+}
