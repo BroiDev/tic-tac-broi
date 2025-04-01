@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kółko i krzyżyk</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/menu.css">
+    <link rel="icon" href="img/icon.png" type="image/svg+xml">
+</head>
+<body>
+    <header>
+        <div id="logo">
+            <img src="img/icon.png" alt="icon">
+            <p>Kółko i krzyżyk</p>
+        </div>
+        <div id="menu">
+            <button id="sources" title="Źródła"><img src="img/sources.png" alt="sources"></button>
+            <button id="sound" title="Dźwięk"><img src="img/sound-on.png" alt="sound"></button>
+            <button id="settings" title="Ustawienia"><img src="img/setting.png" alt="settings"></button>
+        </div>
+    </header>
+    <main>
+        <form id="game-settings" action="html/game.html" method="get">
+            <fieldset>
+                <legend>Ustawienia gry</legend>
+
+                <label>Lista graczy:</label>
+                <div id="players-container">
+                    <div id="players-list">
+                        <!-- Player fields are displayed here -->
+                    </div>
+                    <div class="players-buttons">
+                        <button type="button" id="add-player" title="Dodaj gracza"><img src="img/plus.png" alt="plus"></button>
+                        <button type="button" id="remove-player" title="Usuń gracza"><img src="img/minus.png" alt="minus"></button>
+                    </div>
+                </div>
+
+                <div class="two-columns">
+                    <div class="field">
+                        <label for="rows">Liczba wierszy:</label>
+                        <input type="number" id="rows" name="rows" min="3" value="3" required>
+                    </div>
+                    <div class="field">
+                        <label for="cols">Liczba kolumn:</label>
+                        <input type="number" id="cols" name="cols" min="3" value="3" required>
+                    </div>
+                </div>
+
+                <label for="win-condition">Warunek wygranej:</label>
+                <input type="number" id="win-condition" name="win-condition" min="3" value="3" required>
+
+                <label for="game-mode">Tryb gry:</label>
+                <select id="game-mode" name="game-mode" required>
+                    <option value="classic">Klasyczny</option>
+                    <option value="column">Kolumnowy</option>
+                </select>
+            </fieldset>
+            <div id="warning">
+                <img src="img/warning-sign.png" alt="warning">
+                <div id="warning-text">
+                    <p>Uwaga:</p>
+                    <div id="warning-infos">
+
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" title="Graj"><img src="img/play-button-arrowhead.png" alt="play"></button>
+        </form>
+    </main>
+    <footer>&copy;2025 BroiDev</footer>
+    <dialog id="sources-dialog">
+        <div class="dialog-header">
+            <h1>Źródła</h1>
+            <button class="close" title="Zamknij"><img src="img/close.png" alt="close"></button>
+        </div>
+        <div class="dialog-content">
+            <ul>
+                <li>Wszystkie ikony: <a href="https://www.flaticon.com/collections/NjEwMDEw">Flaticon</a></li>
+                <li>Muzyka oczekiwania na skończenie myślenia bota Minimax: <a href="https://youtu.be/6P2_w8fAu4c?si=Nt-dGjb669G-u9-m">Cocktail Shakers — Girl From Petaluma</a></li>
+                <li>Logo strony: <a href="https://stock.adobe.com/pl/images/tic-tac-toe-icon/567483659">Adobe Stock</a></li>
+                <li>Użyte czcionki: <a href="https://www.1001fonts.com/fredoka-one-font.html">Fredoka One</a> (z własnoręcznie dodanymi polskimi znakami), <a href="https://fonts.google.com/noto/specimen/Noto+Sans">Noto Sans</a></li>
+            </ul>
+        </div>
+    </dialog>
+    <dialog id="settings-dialog">
+        <div class="dialog-header">
+            <h1>Ustawienia</h1>
+            <button class="close" title="Zamknij"><img src="img/close.png" alt="close"></button>
+        </div>
+        <div id="settings-content" class="dialog-content">
+            <div class="input-field">
+                <label for="volume">Głośność muzyki</label>
+                <div class="input-container slider">
+                    <input type="range" id="volume" name="volume" min="0" max="1" step="0.01" value="0.5">
+                    <output for="volume">0.5</output>
+                </div>
+            </div>
+        </div>
+    </dialog>
+
+    <script type="module" src="js/script.js"></script>
+    <script type="module" src="js/menu.js"></script>
+</body>
+</html>

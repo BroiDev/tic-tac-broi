@@ -1,43 +1,174 @@
-@font-face {
-    font-family: "Fredoka One";
-    src: url("../fonts/FredokaOne-Regular-PL.otf");
-}
+@import url('globalVariables.css');
 
 body
 {
     padding: 0;
     margin: 0;
+    overflow-x: hidden;
 }
 header
 {
-    --margin-x: 10px;
     position: relative;
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
-    margin: 0 var(--margin-x);
-    height: 100px;
-    width: calc(100vw - calc(var(--margin-x) * 2));
+    margin: 0;
+    padding: 0 10px;
+    box-sizing: border-box;
+    min-height: var(--min-header-height);
+    height: var(--header-height);
+    width: 100%;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    background-color: #e6e6e6;
 }
 #logo
 {
     height: 100%;
     display: flex;
-    gap: 10px;
+    gap: max(0.4rem, 1vw);
     align-items: center;
     flex-direction: row;
     font-family: "Fredoka One", ui-rounded;
-    font-size: 32px;
+    font-size: max(1rem, min(3vw, 3vh));
     text-decoration: none;
     color: black;
+    border-radius: 10px;
 }
 #logo img
 {
     height: 75%;
     margin: 0;
+}
+#back
+{
+    margin-right: 1vw;
+}
+#menu
+{
+    height: 100%;
+    display: flex;
+    gap: max(0.4rem, 1vw);
+    align-items: center;
+    flex-direction: row;
+}
+button, a.button
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    border-radius: 10px;
+    height: 75%;
+    border: none;
+    background-color: #c8c8c8;
+    cursor: pointer;
+    transition: 0.5s;
+    aspect-ratio: 1/1;
+}
+button:hover, a.button:hover
+{
+    background-color: #b8b8b8;
+    transform: scale(1.05);
+}
+button img, a.button img
+{
+    height: 70%;
+}
+#sound.off img
+{
+    content: url("../img/sound-off.png");
+}
+dialog
+{
+    font-family: "Noto Sans", sans-serif;
+    position: relative;
+    min-width: 15rem;
+    width: 50vw;
+    overflow: hidden;
+    border: none;
+    border-radius: 10px;
+    background-color: #ffffff;
+    padding: 0;
+}
+dialog::backdrop
+{
+    background-color: rgba(0, 0, 0, 0.5);
+}
+.dialog:focus
+{
+    outline: none;
+}
+.dialog-header
+{
+    padding: 0 10px 0 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    height: var(--header-height);
+    background-color: #e6e6e6;
+}
+.dialog-header h1
+{
+    font-size: max(1.2rem, 4vmin);
+}
+.dialog-content
+{
+    padding: 10px 10px 10px 20px;
+    font-size: max(0.75rem, 2.5vmin);
+    display: flex;
+    flex-direction: column;
+}
+.dialog-content p, ul
+{
+    margin: 0.5rem;
+}
+.dialog-content li
+{
+    margin-block: 0.25rem;
+}
+#settings-content
+{
+    gap: 20px;
+}
+.input-field
+{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
+label, .input-container
+{
+    width: 100%;
+    height: min-content;
+}
+.input-container
+{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+input
+{
+    flex-grow: 1;
+}
+output
+{
+    flex-shrink: 0;
+    width: 5ch;
+    text-align: right;
+}
+@media (max-width: 400px)
+{
+    input
+    {
+        flex-grow: 0;
+        width: 100%;
+    }
 }
