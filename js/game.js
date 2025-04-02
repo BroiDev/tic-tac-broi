@@ -1,5 +1,6 @@
 import { playMusic, playerSymbols } from './script.js';
-import {addClickEvent, addSubmitEvent} from './helper.js';
+import { addClickEvent, addSubmitEvent } from './helper.js';
+import { placeRandomly, tryToWin, tryToBlock, findBestMove } from './bots.js';
 
 const playerTypes =
 {
@@ -23,14 +24,13 @@ function getLocalStorageSettings()
 // Pobierz ustawienia z URL, localStorage lub zastosuj wartości domyślne
 const params = new URLSearchParams(window.location.search);
 const localStorageSettings = getLocalStorageSettings();
-console.log(params.get('rows') ? "elo" : "nie elo");
-const rows = params.get("rows") ? parseInt(params.get("rows"), 10) : (localStorageSettings ? localStorageSettings.rows : 3); // The number of rows in the board.
-const cols = params.get("rows") ? parseInt(params.get("cols"), 10) : (localStorageSettings ? localStorageSettings.cols : 3); // The number of colums in the board.
-const winCondition = params.get("win-condition") ? parseInt(params.get("win-condition"), 10) : (localStorageSettings ? localStorageSettings.winCondition : 3); // The number of symbols in a row to win.
+export const rows = params.get("rows") ? parseInt(params.get("rows"), 10) : (localStorageSettings ? localStorageSettings.rows : 3); // The number of rows in the board.
+export const cols = params.get("rows") ? parseInt(params.get("cols"), 10) : (localStorageSettings ? localStorageSettings.cols : 3); // The number of colums in the board.
+export const winCondition = params.get("win-condition") ? parseInt(params.get("win-condition"), 10) : (localStorageSettings ? localStorageSettings.winCondition : 3); // The number of symbols in a row to win.
 const gameMode = params.get("game-mode") || (localStorageSettings ? localStorageSettings.gameMode : gameModes.CLASSIC); // The game mode (classic or column).
-const minimaxDepth = 5; // The depth of the minimax algorithm. The higher the number, the more time it takes to calculate the best move.
+export const minimaxDepth = 5; // The depth of the minimax algorithm. The higher the number, the more time it takes to calculate the best move.
 
-let players = [];
+export let players = [];
 for (let i = 0; i < 4; i++)
 {
     let playerParam = params.get('player' + i);
@@ -48,7 +48,7 @@ if (players.length < 2)
     players = [...Array(2).fill(playerTypes.PLAYER), ...players];
 }
 const realPlayersCount = players.filter(player => player === playerTypes.PLAYER).length;
-console.log(realPlayersCount);
+console.log(`Real players: ${realPlayersCount}`);
 
 const restartButton = document.querySelector('#restart');
 const volumeSlider = document.querySelector('#volume');
@@ -59,11 +59,11 @@ elevatorMusic.volume = localStorage.getItem("volume") || 0.5;
 let playPromise = undefined;
 
 let playerTiles;
-let currentPlayer;
-let boardState;
+export let currentPlayer;
+export let boardState;
 let boardArray;
 let columnsArray;
-let freeTiles;
+export let freeTiles;
 let gameOver;
 let botThinking;
 let lastMove;
@@ -151,7 +151,7 @@ function placePlayerSymbol(row, col)
         placeSymbol(row, col);
     }
 }
-function placeSymbol(row, col)
+export function placeSymbol(row, col)
 {
     if (gameOver === false)
     {
@@ -281,211 +281,9 @@ function botMove()
             break;
     }
 }
-function placeRandomly()
-{
-    const tile = freeTiles[Math.floor(Math.random() * freeTiles.length)];
-    placeSymbol(tile.getAttribute('data-row'), tile.getAttribute('data-col'));
-}
 
-function tryToWin()
-{
-    const playerSymbol = playerSymbols[currentPlayer];
-    for (let i = 0; i < rows; i++)
-    {
-        for (let j = 0; j < cols; j++)
-        {
-            if (boardState[i][j] === "")
-            {
-                boardState[i][j] = playerSymbol;
-
-                if (checkWin(playerSymbol) !== null)
-                {
-                    boardState[i][j] = "";
-                    placeSymbol(i, j);
-                    return true;
-                }
-
-                boardState[i][j] = "";
-            }
-        }
-    }
-    return false;
-}
-function tryToBlock()
-{
-    const opponentSymbol = playerSymbols[(currentPlayer + 1) % players.length];
-    for (let i = 0; i < rows; i++)
-    {
-        for (let j = 0; j < cols; j++)
-        {
-            if (boardState[i][j] === "")
-            {
-                boardState[i][j] = opponentSymbol;
-                if (checkWin(opponentSymbol) !== null)
-                {
-                    boardState[i][j] = "";
-                    placeSymbol(i, j);
-                    return true;
-                }
-                boardState[i][j] = "";
-            }
-        }
-    }
-    return false;
-}
-function playElevatorMusic()
-{
-    console.log(elevatorMusic.readyState);
-    if (elevatorMusic.ended)
-    {
-        elevatorMusic.currentTime = 0;
-    }
-    playPromise = elevatorMusic.play();
-    console.log("Playing elevator music");
-}
-function pauseElevatorMusic()
-{
-    if (playPromise !== undefined)
-    {
-        playPromise.then(_ =>
-        {
-            elevatorMusic.pause();
-            console.log("Paused elevator music");
-        })
-        .catch(error =>
-        {
-            console.log("Error pausing elevator music: ", error);
-        });
-    }
-}
-// Returns a deep copy of the board state (2D array of strings)
-function cloneBoard(board)
-{
-    return board.map(row => row.slice());
-}
-function checkWinState(board, symbol)
-{
-    for (let i = 0; i < rows; i++)
-    {
-        for (let j = 0; j < cols; j++)
-        {
-            if (board[i][j] === symbol)
-            {
-                if (checkDirection(board, i, j, 0, 1, symbol) ||   // poziomo
-                    checkDirection(board, i, j, 1, 0, symbol) ||   // pionowo
-                    checkDirection(board, i, j, 1, 1, symbol) ||   // przekątna w prawo
-                    checkDirection(board, i, j, 1, -1, symbol))
-                {  // przekątna w lewo
-                    return true;
-                }
-            }
-        }
-    }
-    return false;
-}
-
-// Funkcja licząca kontynuacyjność symboli w danym kierunku
-function checkDirection(board, row, col, rowDir, colDir, symbol)
-{
-    let count = 0;
-    let r = row, c = col;
-    while (r >= 0 && r < rows && c >= 0 && c < cols && board[r][c] === symbol)
-    {
-        count++;
-        r += rowDir;
-        c += colDir;
-    }
-    return count >= winCondition;
-}
-
-// Checks if there are no empty tiles in the board
-function isDraw(board)
-{
-    return board.every(row => row.every(cell => cell !== ""));
-}
-
-// The minimax function with alpha-beta pruning.
-// 'isMaximizing' is true if the bot is trying to maximize its score.
-function minimax(board, depth, isMaximizing, alpha, beta)
-{
-    let botSymbol = playerSymbols[currentPlayer];
-    let opponentSymbol = playerSymbols[(currentPlayer + 1) % players.length];
-
-    if (checkWinState(board, botSymbol)) return 10;
-    if (checkWinState(board, opponentSymbol)) return -10;
-    if (isDraw(board) || depth === 0) return 0;
-
-    if (isMaximizing)
-    {
-        let maxEval = -Infinity;
-        for (let i = 0; i < rows; i++)
-        {
-            for (let j = 0; j < cols; j++)
-            {
-                if (board[i][j] === "")
-                {
-                    board[i][j] = botSymbol;
-                    let evalScore = minimax(board, depth - 1, false, alpha, beta);
-                    board[i][j] = "";
-                    maxEval = Math.max(maxEval, evalScore);
-                    alpha = Math.max(alpha, evalScore);
-                    if (beta <= alpha) break;
-                }
-            }
-        }
-        return maxEval;
-    }
-    else
-    {
-        let minEval = Infinity;
-        for (let i = 0; i < rows; i++)
-        {
-            for (let j = 0; j < cols; j++)
-            {
-                if (board[i][j] === "")
-                {
-                    board[i][j] = opponentSymbol;
-                    let evalScore = minimax(board, depth - 1, true, alpha, beta);
-                    board[i][j] = "";
-                    minEval = Math.min(minEval, evalScore);
-                    beta = Math.min(beta, evalScore);
-                    if (beta <= alpha) break;
-                }
-            }
-        }
-        return minEval;
-    }
-}
-
-// Finds the best move for the minimax bot using alpha-beta pruning.
-function findBestMove()
-{
-    let bestScore = -Infinity;
-    let bestMove = null;
-    let botSymbol = playerSymbols[currentPlayer];
-
-    let boardCopy = cloneBoard(boardState);
-    for (let i = 0; i < rows; i++)
-    {
-        for (let j = 0; j < cols; j++)
-        {
-            if (boardCopy[i][j] === "")
-            {
-                boardCopy[i][j] = botSymbol;
-                let moveScore = minimax(boardCopy, minimaxDepth, false, -Infinity, Infinity);
-                boardCopy[i][j] = "";
-                if (moveScore > bestScore)
-                {
-                    bestScore = moveScore;
-                    bestMove = { row: i, col: j };
-                }
-            }
-        }
-    }
-    return bestMove;
-}
-
-function checkWin(playerSymbol)
+// Check if a player with the given symbol has won the game and return tiles which made them do so. Returns false if the game is a draw, null if no one has won yet.
+export function checkWin(playerSymbol)
 {
     // Checking rows
     for (let i = 0; i < rows; i++)
@@ -590,6 +388,33 @@ function checkWin(playerSymbol)
     return null;
 }
 
+function playElevatorMusic()
+{
+    console.log(`Elevator music ready state: ${elevatorMusic.readyState}`);
+    if (elevatorMusic.ended)
+    {
+        elevatorMusic.currentTime = 0;
+    }
+    playPromise = elevatorMusic.play();
+    console.log("Playing elevator music");
+}
+function pauseElevatorMusic()
+{
+    if (playPromise !== undefined)
+    {
+        playPromise.then(_ =>
+        {
+            elevatorMusic.pause();
+            console.log("Paused elevator music");
+        })
+            .catch(error =>
+            {
+                console.log("Error pausing elevator music: ", error);
+            });
+    }
+}
+
+// Main
 volumeSlider.addEventListener("input", () =>
 {
     elevatorMusic.volume = volumeSlider.value;
